@@ -39,7 +39,7 @@ const char* fragmentShaderSource_2 = "#version 330 core\n"
 "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
 "}\n\0";
 
-int main()
+int hello_triangle()
 {
 	// Init glfw
 	if (glfwInit() != GL_TRUE)
@@ -207,7 +207,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		
+
 
 		glUseProgram(shaderProgram);
 
@@ -235,6 +235,6 @@ int main()
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
 	return 0;
 }
-

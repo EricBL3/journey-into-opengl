@@ -116,15 +116,20 @@ int main()
 
 	// Vertex input
 	float vertices[] = {
-		0.5f, 0.5f, 0.0f,	// top right
-		0.5f, -0.5f, 0.0f,	// bottom right
-		-0.5f, -0.5f, 0.0f,	// bottom left
-		-0.5f, 0.5f, 0.0f,	// top left
+		// triangle 1
+		-0.5f, 0.5f, 0.0f,	// top 
+		-1.0f, -0.5f, 0.0f,	// left
+
+		0.0f, -0.5f, 0.0f,	// mid point
+
+		// triangle 2
+		0.5f, 0.5f, 0.0f,	// top
+		1.0f, -0.5f, 0.0f,	// right
 	};
 
 	unsigned int indices[] = {
-		0, 1, 3,	// first triangle
-		1, 2, 3		// second triangle
+		0, 1, 2,	// first triangle
+		3, 2, 4		// second triangle
 	};
 
 
@@ -149,7 +154,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))

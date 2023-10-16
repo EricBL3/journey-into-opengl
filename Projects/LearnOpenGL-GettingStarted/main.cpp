@@ -1,5 +1,5 @@
 #include "hello_triangle.h"
-#include "shaders.h"
+#include "hello_shaders.h"
 
 
 int main()

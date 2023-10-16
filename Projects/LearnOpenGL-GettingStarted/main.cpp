@@ -4,5 +4,5 @@
 
 int main()
 {
-	return hello_triangle();
+	return shaders();
 }

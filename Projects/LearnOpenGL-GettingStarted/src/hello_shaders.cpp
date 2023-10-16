@@ -40,7 +40,7 @@ int hello_shaders()
 	}
 
 	// create shaders
-	Shader shader("vertex_shaders/hello_shaders.vs", "fragment_shaders/hello_shaders.fs");
+	Shader shader("vertex_shaders/output_vert_pos.vs", "fragment_shaders/color_vert_pos.fs");
 
 	// Vertex input
 	float vertices_1[] = {
@@ -82,12 +82,12 @@ int hello_shaders()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.Use();
+		//shader.SetFloat("offset", 0.5f);
 
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		float vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
-
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		//float timeValue = glfwGetTime();
+		//float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		//float vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
+		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		// Draw triangle 1
 		glBindVertexArray(VAO_1);

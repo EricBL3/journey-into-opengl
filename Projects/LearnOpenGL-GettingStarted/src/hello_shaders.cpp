@@ -40,7 +40,7 @@ int hello_shaders()
 	}
 
 	// create shaders
-	Shader shader("vertex_shaders/output_vert_pos.vs", "fragment_shaders/color_vert_pos.fs");
+	Shader shader("vertex_shaders/hello_shaders.vs", "fragment_shaders/hello_shaders.fs");
 
 	// Vertex input
 	float vertices_1[] = {

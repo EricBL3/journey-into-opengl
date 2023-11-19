@@ -1,8 +1,9 @@
 #include "../headers/hello_triangle.h"
 #include "../headers/hello_shaders.h"
+#include "../headers/textures.h"
 
 
 int main()
 {
-	return hello_shaders();
+	return textures();
 }

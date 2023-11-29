@@ -2,8 +2,9 @@
 #include "../headers/hello_shaders.h"
 #include "../headers/textures.h"
 #include "../headers/transformations.h"
+#include "../headers/coordinateSystems.h"
 
 int main()
 {
-	return transformations();
+	return coordinateSystems();
 }

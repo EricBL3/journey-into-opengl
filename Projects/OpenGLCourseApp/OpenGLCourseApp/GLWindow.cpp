@@ -118,12 +118,10 @@ void GLWindow::HandleKeys(GLFWwindow* window, int key, int code, int action, int
         if (action == GLFW_PRESS)
         {
             theWindow->keys[key] = true;
-            printf("Pressed: %d\n", key);
         }
         else if (action == GLFW_RELEASE)
         {
             theWindow->keys[key] = false;
-            printf("Released: %d\n", key);
         }
     }
 }

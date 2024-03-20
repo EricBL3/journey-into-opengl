@@ -17,6 +17,7 @@
 #include "GLWindow.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Light.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -30,6 +31,8 @@ Texture dirtTexture;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
+
+Light mainLight;
 
 // Vertex shader
 static const char* vShader = "Shaders/shader.vert";
@@ -87,9 +90,13 @@ int main()
     dirtTexture = Texture((char*)"Textures/dirt.png");
     dirtTexture.LoadTexture();
 
+    mainLight = Light(1.0f, 0.0f, 1.0f, 0.2f);
+
     GLuint uniformProjection = 0;
     GLuint uniformModel = 0;
     GLuint uniformView = 0;
+    GLuint uniformAmbientIntensity = 0;
+    GLuint uniformAmbientColor = 0;
     glm::mat4 projection = glm::perspective(45.0f, mainWindow.GetBufferWidth() / mainWindow.GetBufferHeight(), 0.1f, 100.0f);
 
     while (!mainWindow.GetShouldClose())
@@ -110,6 +117,10 @@ int main()
         uniformModel = shaderList[0]->GetModelLocation();
         uniformProjection = shaderList[0]->GetProjectionLocation();
         uniformView = shaderList[0]->GetViewLocation();
+        uniformAmbientColor = shaderList[0]->GetAmbientColorLocation();
+        uniformAmbientIntensity = shaderList[0]->GetAmbientIntensityLocation();
+
+        mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor);
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));

@@ -22,6 +22,8 @@ public:
     GLuint GetViewLocation();
     GLuint GetAmbientIntensityLocation();
     GLuint GetAmbientColorLocation();
+    GLuint GetAmbientDiffuseLocation();
+    GLuint GetDirection();
 
     void UseShader();
     void ClearShader();
@@ -35,6 +37,8 @@ private:
     GLuint uniformView;
     GLuint uniformAmbientIntensity;
     GLuint uniformAmbientColor;
+    GLuint uniformDiffuseIntensity;
+    GLuint uniformDirection;
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
     void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);

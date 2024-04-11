@@ -17,8 +17,10 @@
 #include "GLWindow.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Material.h"
+#include "CommonValues.h"
+#include "PointLight.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -29,6 +31,7 @@ Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
+Texture plainTexture;
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -36,7 +39,8 @@ Material dullMaterial;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-Light mainLight;
+DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
 
 // Vertex shader
 static const char* vShader = "Shaders/shader.vert";
@@ -103,6 +107,18 @@ void CreateObjects()
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f,
     };
 
+    unsigned int floorIndices[] = {
+        0, 2, 1,
+        1, 2, 3
+    };
+
+    GLfloat floorVertices[] = {
+        -10.0f, 0.0f, -10.0f,   0.0f, 0.0f,     0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f,    10.0f, 0.0f,    0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f,    0.0f, 10.0f,    0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, 10.0f,     10.0f, 10.0f,   0.0f, -1.0f, 0.0f
+    };
+
     CalcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
     Mesh* object = new Mesh();
@@ -112,6 +128,10 @@ void CreateObjects()
     Mesh* object_2 = new Mesh();
     object_2->CreateMesh(vertices, indices, 32, 12);
     meshList.push_back(object_2);
+
+    Mesh* obj_3 = new Mesh();
+    obj_3->CreateMesh(floorVertices, floorIndices, 32, 6);
+    meshList.push_back(obj_3);
 }
 
 void CreateShaders()
@@ -137,20 +157,36 @@ int main()
     dirtTexture = Texture((char*)"Textures/dirt.png");
     dirtTexture.LoadTexture();
 
-    shinyMaterial = Material(1.0f, 32);
+    plainTexture = Texture((char*)"Textures/plain.png");
+    plainTexture.LoadTexture();
+
+    shinyMaterial = Material(1.0f, 256);
     dullMaterial = Material(0.3f, 4);
 
-    mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f, 
-        2.0f, -1.0f, -2.0f, 0.3f);
+    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 0.0f,
+                                0.0f, 0.0f, -1.0f);
+
+    unsigned int pointLightCount = 0;
+
+    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
+                                0.0f, 1.0f,
+                                0.0f, 0.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f);
+
+    pointLightCount++;
+
+    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f,
+                                0.0f, 1.0f,
+                                -4.0f, 0.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f);
+
+    pointLightCount++;
 
     GLuint uniformProjection = 0;
     GLuint uniformModel = 0;
     GLuint uniformView = 0;
     GLuint uniformEyePosition = 0;
-    GLuint uniformAmbientIntensity = 0;
-    GLuint uniformAmbientColor = 0;
-    GLuint uniformDiffuseIntensity = 0;
-    GLuint uniformDirection = 0;
     GLuint uniformSpecularIntensity = 0;
     GLuint uniformShininess = 0;
     glm::mat4 projection = glm::perspective(45.0f, mainWindow.GetBufferWidth() / mainWindow.GetBufferHeight(), 0.1f, 100.0f);
@@ -174,14 +210,13 @@ int main()
         uniformProjection = shaderList[0]->GetProjectionLocation();
         uniformView = shaderList[0]->GetViewLocation();
         uniformEyePosition = shaderList[0]->GetEyePositionLocation();
-        uniformAmbientColor = shaderList[0]->GetAmbientColorLocation();
-        uniformAmbientIntensity = shaderList[0]->GetAmbientIntensityLocation();
-        uniformDiffuseIntensity = shaderList[0]->GetAmbientDiffuseLocation();
-        uniformDirection = shaderList[0]->GetDirection();
         uniformSpecularIntensity = shaderList[0]->GetSpecularIntensityLocation();
         uniformShininess = shaderList[0]->GetShininess();
 
-        mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor, uniformDiffuseIntensity, uniformDirection);
+        shaderList[0]->SetDirectionalLight(&mainLight);
+        shaderList[0]->SetPointLights(pointLights, pointLightCount);
+
+        //mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor, uniformDiffuseIntensity, uniformDirection);
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
@@ -206,6 +241,16 @@ int main()
         dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
         meshList[1]->RenderMesh();
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
+        //model = glm::scale(model, glm::vec3(0.4, 0.4, 1.0f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+        plainTexture.UseTexture();
+        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+        meshList[2]->RenderMesh();
 
         glUseProgram(0);
 
